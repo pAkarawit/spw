@@ -15,6 +15,8 @@ public class GameEngine implements KeyListener, GameReporter{
 	GamePanel gp;
 		
 	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();	
+	private ArrayList<Missile>  missiles = new ArrayList<Missile>();
+
 	private SpaceShip v;	
 	
 	private Timer timer;
@@ -48,11 +50,32 @@ public class GameEngine implements KeyListener, GameReporter{
 		gp.sprites.add(e);
 		enemies.add(e);
 	}
+
+	private void generateMissile(){
+		Missile m = new Missile(v.x + (v.width/2), v.y ) ;
+		gp.sprites.add(m);
+		missiles.add(m);
+
+	}
 	
 	private void process(){
 		if(Math.random() < difficulty){
 			generateEnemy();
+			//generateMissile();
 		}
+
+		Iterator<Missile> m_iter = missiles.iterator();
+		while(m_iter.hasNext()){
+			Missile m = m_iter.next();
+			m.proceed();
+
+			if(!m.isAlive()){
+				m_iter.remove();
+				gp.sprites.remove(m);
+				
+			}
+		}
+
 		
 		Iterator<Enemy> e_iter = enemies.iterator();
 		while(e_iter.hasNext()){
@@ -69,7 +92,11 @@ public class GameEngine implements KeyListener, GameReporter{
 		gp.updateGameUI(this);
 		
 		Rectangle2D.Double vr = v.getRectangle();
+		Rectangle2D.Double ur = v.getRectangle();
 		Rectangle2D.Double er;
+		Rectangle2D.Double mr;
+
+
 		for(Enemy e : enemies){
 			er = e.getRectangle();
 			if(er.intersects(vr)){
@@ -77,6 +104,15 @@ public class GameEngine implements KeyListener, GameReporter{
 				return;
 			}
 		}
+		for(Missile m : missiles){
+			mr = m.getRectangle();
+			if(mr.intersects(ur)){
+				//die();
+				return;
+			}
+
+		}
+
 	}
 	
 	public void die(){
@@ -100,6 +136,9 @@ public class GameEngine implements KeyListener, GameReporter{
 		case KeyEvent.VK_D:
 			difficulty += 0.1;
 			break;
+		case KeyEvent.VK_SPACE:
+			 generateMissile();
+			 break;	
 		}
 	}
 
