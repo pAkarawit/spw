@@ -34,7 +34,10 @@ public class GameEngine implements KeyListener, GameReporter{
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				process();
+				
+				processEnemy();
+				processMissile();
+				//process();
 			}
 		});
 		timer.setRepeats(true);
@@ -52,18 +55,28 @@ public class GameEngine implements KeyListener, GameReporter{
 	}
 
 	private void generateMissile(){
-		Missile m = new Missile(v.x + (v.width/2), v.y ) ;
+		if(getScore() > 2000){
+			Missile m = new Missile(v.x + (v.width/2) - 15 , v.y ) ;
+			 gp.sprites.add(m);
+		     missiles.add(m);
+
+		}
+		else{
+			Missile m = new Missile(v.x + (v.width/2), v.y ) ;
+			gp.sprites.add(m);
+			missiles.add(m);
+		}		
+	}
+
+	private void generateMissile2(){
+		Missile m = new Missile(v.x + (v.width/2) + 15 , v.y ) ;
 		gp.sprites.add(m);
 		missiles.add(m);
 
 	}
-	
-	private void process(){
-		if(Math.random() < difficulty){
-			generateEnemy();
-			//generateMissile();
-		}
 
+
+	private void processMissile(){	
 		Iterator<Missile> m_iter = missiles.iterator();
 		while(m_iter.hasNext()){
 			Missile m = m_iter.next();
@@ -76,23 +89,35 @@ public class GameEngine implements KeyListener, GameReporter{
 			}
 		}
 
+	}		
 		
-		Iterator<Enemy> e_iter = enemies.iterator();
-		while(e_iter.hasNext()){
-			Enemy e = e_iter.next();
-			e.proceed();
-			
-			if(!e.isAlive()){
-				e_iter.remove();
-				gp.sprites.remove(e);
-				score += 200;
-			}
+	
+	private void processEnemy(){
+		if(Math.random() < difficulty){
+			generateEnemy();
+			//generateMissile();
 		}
-		
+
+		Iterator<Enemy> e_iter = enemies.iterator();
+			while(e_iter.hasNext()){
+				Enemy e = e_iter.next();
+				e.proceed();
+					
+				if(!e.isAlive()){
+					e_iter.remove();
+					gp.sprites.remove(e);
+					score += 200;
+				}
+				
+			}
+			    
+
+	
+	//private void process(){	
+
 		gp.updateGameUI(this);
 		
 		Rectangle2D.Double vr = v.getRectangle();
-		Rectangle2D.Double ur = v.getRectangle();
 		Rectangle2D.Double er;
 		Rectangle2D.Double mr;
 
@@ -101,19 +126,25 @@ public class GameEngine implements KeyListener, GameReporter{
 			er = e.getRectangle();
 			if(er.intersects(vr)){
 				die();
-				return;
-			}
-		}
-		for(Missile m : missiles){
-			mr = m.getRectangle();
-			if(mr.intersects(ur)){
-				//die();
-				return;
 			}
 
-		}
+			for(Missile m : missiles){
+			    mr = m.getRectangle();
+			    if(mr.intersects(er)){
+			        score += 1000 ;
+			        e.notAlive();
+			        m.notAlive();
+			       	
+			       
+				    return;
+	        	   }
 
-	}
+		        }
+
+	        }
+
+	       
+	}        
 	
 	public void die(){
 		timer.stop();
@@ -137,7 +168,12 @@ public class GameEngine implements KeyListener, GameReporter{
 			difficulty += 0.1;
 			break;
 		case KeyEvent.VK_SPACE:
+			 if(getScore() > 2000){
+			 	generateMissile2();
+			 	generateMissile();
+			 }	
 			 generateMissile();
+			 
 			 break;	
 		}
 	}

@@ -21,14 +21,14 @@ public class Missile extends Sprite{
 
 	 @Override
 	 public void draw(Graphics2D g){
-	 	if(y < Y_TO_DIE)
+	   /*	if(y < Y_TO_DIE)
 	 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 
 	 	else{
 	 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
 	 			          (float)(Y_TO_DIE - y)/(Y_TO_DIE  - Y_TO_FADE)));
 	 	}
-
+	   */
 
 	 	Toolkit r = Toolkit.getDefaultToolkit();
 	 	Image ime = r.getImage("C:/Users/NextSpeed/Documents/GitHub/spw/f2/laun.png");
@@ -38,10 +38,12 @@ public class Missile extends Sprite{
 
 	 public void proceed(){
 	 	 y -= step;
-	 	 if(y > Y_TO_DIE){
+	 	// if(y > Y_TO_DIE){
 
-	 	 	alive = false ;
-	 	 } 
+	 	 //alive = false ;
+
+	 	 	
+	 	 //} 
 
 	 }
 
@@ -50,6 +52,10 @@ public class Missile extends Sprite{
 	 	return alive;
 	 }
 
+	 public void notAlive(){
+
+	 	alive = false ;
+	 }
 
 
 
