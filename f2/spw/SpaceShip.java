@@ -19,9 +19,13 @@ public class SpaceShip extends Sprite{
 	@Override
 	public void draw(Graphics2D g) {
 
+
 		Toolkit t = Toolkit.getDefaultToolkit(); // Gets the default toolkit.
         Image image = t.getImage ("C:/Users/NextSpeed/Documents/GitHub/spw/f2/fights.png");  //Returns an image which gets pixel data
 		g.drawImage(image, x, y, width, height, null);
+		//g.setColor(Color.GREEN);
+		//g.fillRect(x, y, width, height);
+
 		
 	}
 

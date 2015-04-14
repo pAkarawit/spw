@@ -43,6 +43,9 @@ public class Enemy extends Sprite{
 		e = Toolkit.getDefaultToolkit();
 		im = e.getImage("C:/Users/NextSpeed/Documents/GitHub/spw/f2/swer.gif"); 
 		g.drawImage(im, x, y, width, height, null);
+
+		
+
 		
 	}
 

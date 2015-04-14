@@ -8,6 +8,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+
 import javax.swing.Timer;
 
 
@@ -23,12 +24,18 @@ public class GameEngine implements KeyListener, GameReporter{
 	
 	private long score = 0;
 	private double difficulty = 0.1;
+	private int countdie = 5;
+	private int count = 0;
+	
+
 	
 	public GameEngine(GamePanel gp, SpaceShip v) {
 		this.gp = gp;
 		this.v = v;		
 		
 		gp.sprites.add(v);
+
+	
 		
 		timer = new Timer(50, new ActionListener() {
 			
@@ -41,6 +48,7 @@ public class GameEngine implements KeyListener, GameReporter{
 			}
 		});
 		timer.setRepeats(true);
+
 		
 	}
 	
@@ -95,6 +103,7 @@ public class GameEngine implements KeyListener, GameReporter{
 	private void processEnemy(){
 		if(Math.random() < difficulty){
 			generateEnemy();
+			
 			//generateMissile();
 		}
 
@@ -102,11 +111,13 @@ public class GameEngine implements KeyListener, GameReporter{
 			while(e_iter.hasNext()){
 				Enemy e = e_iter.next();
 				e.proceed();
+
 					
 				if(!e.isAlive()){
 					e_iter.remove();
 					gp.sprites.remove(e);
 					score += 200;
+					
 				}
 				
 			}
@@ -125,7 +136,10 @@ public class GameEngine implements KeyListener, GameReporter{
 		for(Enemy e : enemies){
 			er = e.getRectangle();
 			if(er.intersects(vr)){
-				die();
+				todie();
+				e.notAlive();
+								   			
+
 			}
 
 			for(Missile m : missiles){
@@ -137,13 +151,17 @@ public class GameEngine implements KeyListener, GameReporter{
 			       	
 			       
 				    return;
-	        	   }
+	        	   
 
 		        }
 
 	        }
 
-	       
+	    
+	    }    
+	    if(getScore() > countscorefordif() )
+	    	difficulty += 0.2 ;
+	    
 	}        
 	
 	public void die(){
@@ -164,9 +182,9 @@ public class GameEngine implements KeyListener, GameReporter{
 		case KeyEvent.VK_DOWN:
 			v.move(1,false);
 			break;
-		case KeyEvent.VK_D:
-			difficulty += 0.1;
-			break;
+		//case KeyEvent.VK_D:
+		//	difficulty += 0.1;
+		//	break;
 		case KeyEvent.VK_SPACE:
 			 if(getScore() > 2000){
 			 	generateMissile2();
@@ -180,6 +198,25 @@ public class GameEngine implements KeyListener, GameReporter{
 
 	public long getScore(){
 		return score;
+	}
+
+	public int getNumberalive(){
+		return countdie ;
+	}
+
+	public void todie(){
+		--countdie ;
+		if(countdie < 0)
+			die();
+	}
+
+	public int countscorefordif(){
+		count += 50000 ;
+		return count ;
+	}
+
+	public double getDifficulty(){
+		return difficulty;
 	}
 	
 	@Override
