@@ -17,7 +17,8 @@ public class GameEngine implements KeyListener, GameReporter{
 		
 	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();	
 	private ArrayList<Missile>  missiles = new ArrayList<Missile>();
-
+	private ArrayList<Lifeheart> lifehearts = new ArrayList<Lifeheart>();
+	private ArrayList<BigEnemy>  bigEnemys = new ArrayList<BigEnemy>();
 	private SpaceShip v;	
 	
 	private Timer timer;
@@ -25,7 +26,8 @@ public class GameEngine implements KeyListener, GameReporter{
 	private long score = 0;
 	private double difficulty = 0.1;
 	private int countdie = 5;
-	private int count = 0;
+	private long count = 0;
+	private int level = 0;
 	
 
 	
@@ -44,7 +46,8 @@ public class GameEngine implements KeyListener, GameReporter{
 				
 				processEnemy();
 				processMissile();
-				//process();
+				processLifeheart();
+				processBigEnemy();
 			}
 		});
 		timer.setRepeats(true);
@@ -56,6 +59,13 @@ public class GameEngine implements KeyListener, GameReporter{
 		timer.start();
 	}
 	
+	private void generateBigEnemy(){
+		BigEnemy b = new BigEnemy(80 ,20);
+		gp.sprites.add(b);
+		bigEnemys.add(b);
+
+	}
+
 	private void generateEnemy(){
 		Enemy e = new Enemy((int)(Math.random()*390), 30);
 		gp.sprites.add(e);
@@ -84,6 +94,43 @@ public class GameEngine implements KeyListener, GameReporter{
 	}
 
 
+	private void generateLifeheart(){
+		Lifeheart l = new Lifeheart((int)(Math.random()*390), 30);
+		gp.sprites.add(l);
+		lifehearts.add(l);
+
+	}
+	private void processBigEnemy(){
+		Iterator<BigEnemy> b_iter = bigEnemys.iterator();
+		while(b_iter.hasNext()){
+			BigEnemy b = b_iter.next();
+			b.proceed();
+
+			if(!b.isAlive()){
+				b_iter.remove();
+				gp.sprites.remove(b);
+			}
+
+		}
+		
+
+	}
+
+	private void processLifeheart(){
+		Iterator<Lifeheart> l_iter = lifehearts.iterator();
+		while(l_iter.hasNext()){
+			Lifeheart l = l_iter.next();
+			l.proceed();
+
+			if(!l.isAlive()){
+				l_iter.remove();
+				gp.sprites.remove(l);
+			}
+
+		}
+
+	}
+
 	private void processMissile(){	
 		Iterator<Missile> m_iter = missiles.iterator();
 		while(m_iter.hasNext()){
@@ -96,6 +143,7 @@ public class GameEngine implements KeyListener, GameReporter{
 				
 			}
 		}
+
 
 	}		
 		
@@ -131,6 +179,8 @@ public class GameEngine implements KeyListener, GameReporter{
 		Rectangle2D.Double vr = v.getRectangle();
 		Rectangle2D.Double er;
 		Rectangle2D.Double mr;
+		Rectangle2D.Double lr;
+
 
 
 		for(Enemy e : enemies){
@@ -147,21 +197,33 @@ public class GameEngine implements KeyListener, GameReporter{
 			    if(mr.intersects(er)){
 			        score += 1000 ;
 			        e.notAlive();
-			        m.notAlive();
-			       	
+			        m.notAlive();			       	
 			       
 				    return;
 	        	   
-
 		        }
 
 	        }
-
 	    
 	    }    
-	    if(getScore() > countscorefordif() )
-	    	difficulty += 0.2 ;
+	    if(getScore() > countscorefordif() ){
+	    	count += 70000;
+	    	difficulty += 0.05 ;
+	    	level++;
+	    }
 	    
+
+
+	    for(Lifeheart l : lifehearts){
+	    	lr = l.getRectangle();
+	    	if(lr.intersects(vr)){
+	    		countdie++;
+	    		l.notAlive();
+
+	    		return;
+	    	}
+	    }
+	   
 	}        
 	
 	public void die(){
@@ -206,17 +268,25 @@ public class GameEngine implements KeyListener, GameReporter{
 
 	public void todie(){
 		--countdie ;
+		if(countdie < 2)
+			generateLifeheart();
 		if(countdie < 0)
 			die();
 	}
 
-	public int countscorefordif(){
-		count += 50000 ;
+	public long countscorefordif(){
 		return count ;
 	}
 
 	public double getDifficulty(){
 		return difficulty;
+	}
+
+	public int getLevel(){
+		if(level == 10){
+	    	generateBigEnemy();
+	    }	
+		return level;
 	}
 	
 	@Override

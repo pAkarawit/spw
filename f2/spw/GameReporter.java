@@ -4,6 +4,7 @@ public interface GameReporter {
 
 	long getScore();
 	int getNumberalive();
-	double getDifficulty(); 
+	//double getDifficulty();
+	int getLevel(); 
 	
 }
