@@ -19,6 +19,7 @@ public class GameEngine implements KeyListener, GameReporter{
 	private ArrayList<Missile>  missiles = new ArrayList<Missile>();
 	private ArrayList<Lifeheart> lifehearts = new ArrayList<Lifeheart>();
 	private ArrayList<BigEnemy>  bigEnemys = new ArrayList<BigEnemy>();
+	private ArrayList<BulletBigEnemy> bulletbigEnemys = new ArrayList<BulletBigEnemy>(); 	
 	private SpaceShip v;	
 	
 	private Timer timer;
@@ -28,7 +29,8 @@ public class GameEngine implements KeyListener, GameReporter{
 	private int countdie = 5;
 	private long count = 0;
 	private int level = 0;
-	
+	private int threeposition = 1 ;
+	private int countthreposition = 0 ;
 
 	
 	public GameEngine(GamePanel gp, SpaceShip v) {
@@ -48,6 +50,7 @@ public class GameEngine implements KeyListener, GameReporter{
 				processMissile();
 				processLifeheart();
 				processBigEnemy();
+				processBulletBigEnemy();
 			}
 		});
 		timer.setRepeats(true);
@@ -60,10 +63,29 @@ public class GameEngine implements KeyListener, GameReporter{
 	}
 	
 	private void generateBigEnemy(){
-		BigEnemy b = new BigEnemy(80 ,20);
+	    BigEnemy b = new BigEnemy(110,20,150,200);
 		gp.sprites.add(b);
 		bigEnemys.add(b);
+		
+	}
 
+	private void generateBulletBigEnemy1(){
+	    BulletBigEnemy bu = new BulletBigEnemy(180 ,90);
+		gp.sprites.add(bu);
+		bulletbigEnemys.add(bu);
+		
+	}
+	private void generateBulletBigEnemy2(){
+	    BulletBigEnemy bs = new BulletBigEnemy(240 ,90);
+		gp.sprites.add(bs);
+		bulletbigEnemys.add(bs);
+		
+	}
+	private void generateBulletBigEnemy3(){
+	    BulletBigEnemy bs = new BulletBigEnemy(120 ,90);
+		gp.sprites.add(bs);
+		bulletbigEnemys.add(bs);
+		
 	}
 
 	private void generateEnemy(){
@@ -101,6 +123,7 @@ public class GameEngine implements KeyListener, GameReporter{
 
 	}
 	private void processBigEnemy(){
+
 		Iterator<BigEnemy> b_iter = bigEnemys.iterator();
 		while(b_iter.hasNext()){
 			BigEnemy b = b_iter.next();
@@ -116,6 +139,22 @@ public class GameEngine implements KeyListener, GameReporter{
 
 	}
 
+	private void processBulletBigEnemy(){
+		Iterator<BulletBigEnemy> bu_iter = bulletbigEnemys.iterator();
+		while(bu_iter.hasNext()){
+			BulletBigEnemy bu = bu_iter.next();
+			bu.proceed();
+
+			if(!bu.isAlive()){
+				bu_iter.remove();
+				gp.sprites.remove(bu);
+			}
+
+		}
+		
+
+	}
+	
 	private void processLifeheart(){
 		Iterator<Lifeheart> l_iter = lifehearts.iterator();
 		while(l_iter.hasNext()){
@@ -150,7 +189,8 @@ public class GameEngine implements KeyListener, GameReporter{
 	
 	private void processEnemy(){
 		if(Math.random() < difficulty){
-			generateEnemy();
+			if(level != 2)
+			   generateEnemy();
 			
 			//generateMissile();
 		}
@@ -169,19 +209,17 @@ public class GameEngine implements KeyListener, GameReporter{
 				}
 				
 			}
-			    
-
-	
+			    	
 	//private void process(){	
 
 		gp.updateGameUI(this);
 		
 		Rectangle2D.Double vr = v.getRectangle();
+		Rectangle2D.Double br;
 		Rectangle2D.Double er;
-		Rectangle2D.Double mr;
+		Rectangle2D.Double mr1;
+		Rectangle2D.Double mr2;
 		Rectangle2D.Double lr;
-
-
 
 		for(Enemy e : enemies){
 			er = e.getRectangle();
@@ -193,8 +231,8 @@ public class GameEngine implements KeyListener, GameReporter{
 			}
 
 			for(Missile m : missiles){
-			    mr = m.getRectangle();
-			    if(mr.intersects(er)){
+			    mr1 = m.getRectangle();
+			    if(mr1.intersects(er)){
 			        score += 1000 ;
 			        e.notAlive();
 			        m.notAlive();			       	
@@ -202,7 +240,7 @@ public class GameEngine implements KeyListener, GameReporter{
 				    return;
 	        	   
 		        }
-
+		        
 	        }
 	    
 	    }    
@@ -211,8 +249,23 @@ public class GameEngine implements KeyListener, GameReporter{
 	    	difficulty += 0.05 ;
 	    	level++;
 	    }
-	    
 
+
+	    for(BigEnemy b : bigEnemys){
+		    br = b.getRectangle();
+		    for(Missile mi : missiles){    
+		    	mr2 = mi.getRectangle();
+		       if(mr2.intersects(br.x , br.y-55 ,br.width ,br.height)){
+		           mi.notAlive();  
+					  generateBulletBigEnemy1();
+					  generateBulletBigEnemy2();
+					  generateBulletBigEnemy3();
+				}
+			   	
+            }	
+	    }
+
+	    
 
 	    for(Lifeheart l : lifehearts){
 	    	lr = l.getRectangle();
@@ -282,9 +335,10 @@ public class GameEngine implements KeyListener, GameReporter{
 		return difficulty;
 	}
 
-	public int getLevel(){
-		if(level == 10){
+	public  int getLevel(){
+		if(level == 7){
 	    	generateBigEnemy();
+	    	
 	    }	
 		return level;
 	}

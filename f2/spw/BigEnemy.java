@@ -10,13 +10,13 @@ public class BigEnemy extends Sprite{
 	public static final int Y_TO_FADE = 400 ;
 	public static final int Y_TO_DIE = 600 ;
 
-	private int step = 5;
+	private int step = 30;
 	private boolean alive = true;
 	Toolkit w;
 	Image ime;
 
-	public BigEnemy(int x,int y){
-		super(x,y,220,140);
+	public BigEnemy(int x,int y ,int width, int height){
+		super(x,y,width,height);
 
 	}
 
@@ -34,15 +34,8 @@ public class BigEnemy extends Sprite{
 
 	public void proceed(){
 		
-		//x += step ;
-		//if(x == 380)
-        x -= step;
-		//if(x == 0)
-		 // x += step ; 	
-		//if(x > Y_TO_FADE){
-
-		 //alive = false;
-		//}
+    	
+		
 
 	}
 	public boolean isAlive(){
