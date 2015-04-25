@@ -8,13 +8,13 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
 import javax.swing.Timer;
 
 
 public class GameEngine implements KeyListener, GameReporter{
 	GamePanel gp;
-		
+
+	Massage f = new Massage();
 	private ArrayList<Enemy> enemies = new ArrayList<Enemy>();	
 	private ArrayList<Missile>  missiles = new ArrayList<Missile>();
 	private ArrayList<Lifeheart> lifehearts = new ArrayList<Lifeheart>();
@@ -189,7 +189,7 @@ public class GameEngine implements KeyListener, GameReporter{
 	
 	private void processEnemy(){
 		if(Math.random() < difficulty){
-			if(level != 2)
+			if(level != 7)
 			   generateEnemy();
 			
 			//generateMissile();
@@ -280,7 +280,9 @@ public class GameEngine implements KeyListener, GameReporter{
 	}        
 	
 	public void die(){
+		f.massageshowGameOver(this);
 		timer.stop();
+
 	}
 	
 	void controlVehicle(KeyEvent e) {
@@ -323,7 +325,7 @@ public class GameEngine implements KeyListener, GameReporter{
 		--countdie ;
 		if(countdie < 2)
 			generateLifeheart();
-		if(countdie < 0)
+		if(countdie < 0)			
 			die();
 	}
 
