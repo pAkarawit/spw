@@ -6,5 +6,6 @@ public interface GameReporter {
 	int getNumberalive();
 	//double getDifficulty();
 	int getLevel(); 
+	int getBossScore();
 	
 }

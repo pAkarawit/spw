@@ -31,6 +31,7 @@ public class GameEngine implements KeyListener, GameReporter{
 	private int level = 0;
 	private int threeposition = 1 ;
 	private int countthreposition = 0 ;
+	private int scoreboss = 1000 ;
 
 	
 	public GameEngine(GamePanel gp, SpaceShip v) {
@@ -51,6 +52,7 @@ public class GameEngine implements KeyListener, GameReporter{
 				processLifeheart();
 				processBigEnemy();
 				processBulletBigEnemy();
+				process();
 			}
 		});
 		timer.setRepeats(true);
@@ -66,23 +68,24 @@ public class GameEngine implements KeyListener, GameReporter{
 	    BigEnemy b = new BigEnemy(110,20,150,200);
 		gp.sprites.add(b);
 		bigEnemys.add(b);
+
 		
 	}
 
 	private void generateBulletBigEnemy1(){
-	    BulletBigEnemy bu = new BulletBigEnemy(180 ,90);
+	    BulletBigEnemy bu = new BulletBigEnemy(180 ,120);
 		gp.sprites.add(bu);
 		bulletbigEnemys.add(bu);
 		
 	}
 	private void generateBulletBigEnemy2(){
-	    BulletBigEnemy bs = new BulletBigEnemy(240 ,90);
+	    BulletBigEnemy bs = new BulletBigEnemy(240 ,120);
 		gp.sprites.add(bs);
 		bulletbigEnemys.add(bs);
 		
 	}
 	private void generateBulletBigEnemy3(){
-	    BulletBigEnemy bs = new BulletBigEnemy(120 ,90);
+	    BulletBigEnemy bs = new BulletBigEnemy(120 ,120);
 		gp.sprites.add(bs);
 		bulletbigEnemys.add(bs);
 		
@@ -189,10 +192,9 @@ public class GameEngine implements KeyListener, GameReporter{
 	
 	private void processEnemy(){
 		if(Math.random() < difficulty){
-			if(level != 7)
+			if(level < 7)
 			   generateEnemy();
 			
-			//generateMissile();
 		}
 
 		Iterator<Enemy> e_iter = enemies.iterator();
@@ -209,8 +211,10 @@ public class GameEngine implements KeyListener, GameReporter{
 				}
 				
 			}
+
+	}		
 			    	
-	//private void process(){	
+	private void process(){	
 
 		gp.updateGameUI(this);
 		
@@ -219,7 +223,10 @@ public class GameEngine implements KeyListener, GameReporter{
 		Rectangle2D.Double er;
 		Rectangle2D.Double mr1;
 		Rectangle2D.Double mr2;
+		Rectangle2D.Double mr3;
 		Rectangle2D.Double lr;
+		Rectangle2D.Double bur ;
+		Rectangle2D.Double burr ;
 
 		for(Enemy e : enemies){
 			er = e.getRectangle();
@@ -245,9 +252,11 @@ public class GameEngine implements KeyListener, GameReporter{
 	    
 	    }    
 	    if(getScore() > countscorefordif() ){
-	    	count += 70000;
+	    	if(getLevel() <= 7)
+	    		count += 5000;
 	    	difficulty += 0.05 ;
-	    	level++;
+	    	if(getLevel() < 7)
+	    	   level++;
 	    }
 
 
@@ -255,17 +264,26 @@ public class GameEngine implements KeyListener, GameReporter{
 		    br = b.getRectangle();
 		    for(Missile mi : missiles){    
 		    	mr2 = mi.getRectangle();
-		       if(mr2.intersects(br.x , br.y-55 ,br.width ,br.height)){
-		           mi.notAlive();  
-					  generateBulletBigEnemy1();
-					  generateBulletBigEnemy2();
-					  generateBulletBigEnemy3();
+		       if(mr2.intersects(br.x , br.y-55 ,br.width ,br.height)){		            		           
+		           mi.notAlive(); 	
+		            
+		      	   generateBulletBigEnemy2();
+			       generateBulletBigEnemy3();
+			       generateBulletBigEnemy1();
+		   		    
+		   		   scoreboss -= 2;     
+		   		   if(getBossScore() == 0){
+		   		   	 b.notAlive();
+		   		   }
+		          //score += 10000;
 				}
-			   	
+				
             }	
+                    
+		           
 	    }
 
-	    
+
 
 	    for(Lifeheart l : lifehearts){
 	    	lr = l.getRectangle();
@@ -276,8 +294,29 @@ public class GameEngine implements KeyListener, GameReporter{
 	    		return;
 	    	}
 	    }
-	   
-	}        
+
+	    for (BulletBigEnemy bu : bulletbigEnemys){
+	    	bur = bu.getRectangle();
+	    	for(Missile mm : missiles){
+	    		mr3 = mm.getRectangle();
+	    		if(mr3.intersects(bur)){
+	    			mm.notAlive();
+	    			bu.notAlive();
+	    		}
+	    	}
+
+	    }
+	    for(BulletBigEnemy bb : bulletbigEnemys){
+	    	burr = bb.getRectangle();
+			if(burr.intersects(vr)){
+				bb.notAlive();								   			
+				todie();
+			}
+	    }
+
+	} 
+
+	       
 	
 	public void die(){
 		f.massageshowGameOver(this);
@@ -303,7 +342,7 @@ public class GameEngine implements KeyListener, GameReporter{
 		//	difficulty += 0.1;
 		//	break;
 		case KeyEvent.VK_SPACE:
-			 if(getScore() > 2000){
+			 if(getLevel() >= 4){
 			 	generateMissile2();
 			 	generateMissile();
 			 }	
@@ -329,6 +368,8 @@ public class GameEngine implements KeyListener, GameReporter{
 			die();
 	}
 
+	
+
 	public long countscorefordif(){
 		return count ;
 	}
@@ -345,6 +386,11 @@ public class GameEngine implements KeyListener, GameReporter{
 		return level;
 	}
 	
+	public int getBossScore(){
+		if(scoreboss < 0)
+			return 0;	
+		return scoreboss;
+	}
 	@Override
 	public void keyPressed(KeyEvent e) {
 		controlVehicle(e);

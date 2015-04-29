@@ -33,9 +33,9 @@ public class BigEnemy extends Sprite{
 	}
 
 	public void proceed(){
-		
-    	
-		
+		if(y > Y_TO_DIE){
+		   alive = false;
+		}
 
 	}
 	public boolean isAlive(){
