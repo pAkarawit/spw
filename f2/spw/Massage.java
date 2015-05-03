@@ -3,6 +3,7 @@ package f2.spw;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+
 public class Massage {
 
 	public void massageshowGameOver(GameReporter g){	
@@ -23,4 +24,5 @@ public class Massage {
 		f.add(s);
 		f.setVisible(true);
     }
+	
 }	

@@ -10,7 +10,7 @@ public class Enemy extends Sprite{
 	public static final int Y_TO_FADE = 400;
 	public static final int Y_TO_DIE = 600;
 	
-	private int step = 12;
+	private int step = 10;
 	private boolean alive = true;
 	Toolkit e;
 	Image im;
@@ -32,20 +32,10 @@ public class Enemy extends Sprite{
 		
 		*/
 
-		//if(die == false){
-
-		//	e = Toolkit.getDefaultToolkit();
-		//    im = e.getImage("C:/Users/NextSpeed/Documents/GitHub/spw/f2/expl.png"); 
-		//    g.drawImage(im, x, y, width, height, null);
-
-		//}
 
 		e = Toolkit.getDefaultToolkit();
 		im = e.getImage("C:/Users/NextSpeed/Documents/GitHub/spw/f2/swer.gif"); 
 		g.drawImage(im, x, y, width, height, null);
-
-		
-
 		
 	}
 
