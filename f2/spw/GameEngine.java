@@ -53,13 +53,12 @@ public class GameEngine implements KeyListener, GameReporter{
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
-				processEnemy();
 				processMissile();
 				processLifeheart();
 				processBulletBigEnemy();
+				processEnemy();
 				process();
-				
+				processdie();
 			}
 		});
 		timer.setRepeats(true);
@@ -144,6 +143,7 @@ public class GameEngine implements KeyListener, GameReporter{
 			if(!l.isAlive()){
 				l_iter.remove();
 				gp.sprites.remove(l);
+
 			}
 
 		}
@@ -158,19 +158,24 @@ public class GameEngine implements KeyListener, GameReporter{
 			if(!m.isAlive()){
 				m_iter.remove();
 				gp.sprites.remove(m);
-				if(getLevel() == 7)
-				  scoreboss -= 125;
+				if(getLevel() == 9){
+				   if(getBossScore() >= 0 )	
+				        scoreboss -= 25;
+				}
 				
 			}
 		}
 
+		if(getBossScore() == 0 )
+		   gp.sprites.remove(boss);
 
+		gp.updateGameUI(this);
 	}		
 		
 	
 	private void processEnemy(){
 		if(Math.random() < difficulty){
-			if(level < 7)
+			if(level < 9)
 			   generateEnemy();
 			
 		}
@@ -187,12 +192,17 @@ public class GameEngine implements KeyListener, GameReporter{
 				}
 				
 			}
-
+		if(getLevel() == 9 && getBossScore() > 0){
+	    	gp.sprites.add(boss);
+	    	gp.updateGameUI(this);
+	    }	
+	    
+	    
 	}		
 			    	
 	private void process(){	
 
-		gp.updateGameUI(this);
+		//gp.updateGameUI(this);
 		
 		Rectangle2D.Double vr = v.getRectangle();
 		Rectangle2D.Double er;
@@ -205,11 +215,9 @@ public class GameEngine implements KeyListener, GameReporter{
 
 		for(Enemy e : enemies){
 			er = e.getRectangle();
-			if(er.intersects(vr)){
+			if(er.intersects(vr)){ 
 				todie();
-				e.notAlive();
-								   			
-
+				e.notAlive();								   			
 			}
 
 			for(Missile m : missiles){
@@ -218,18 +226,17 @@ public class GameEngine implements KeyListener, GameReporter{
 			        score += 1000 ;
 			        e.notAlive();
 			        m.notAlive();			       			       
-				    return;
-	        	   
+				    return;	        	   
 		        }
 		        
 	        }
 	    
 	    }    
 	    if(getScore() > countscorefordif() ){
-	    	if(getLevel() <= 7)
-	    		count += 5000;
-	    	difficulty += 0.05 ;
-	    	if(getLevel() < 7)
+	    	if(getLevel() <= 9)
+	    		count += 20000;
+	    	difficulty += 0.03 ;
+	    	if(getLevel() < 9)
 	    	   level++;
 	    }
 
@@ -238,18 +245,18 @@ public class GameEngine implements KeyListener, GameReporter{
 		    mr2 = mi.getRectangle();
 		    // if(mr2.intersects(br.x , br.y ,br.width ,br.height)){
 		   if(getBossScore() > 0 ){ 
-		   	Rectangle2D.Double bos = boss.getRectangle();
-		    if(mr2.intersects(bos)){ 		    	   
-		    	mi.notAlive();  
-		        score += 1000;	
-		         return ;			
-			}
+		   		Rectangle2D.Double bos = boss.getRectangle();
+		    	if(mr2.intersects(bos)){ 		    	   
+		    		mi.notAlive();  
+		       		 score += 1000;	
+		        	 return ;			
+				}
 
 		   } 
 
         }	
                  
-	    if(getLevel() == 7 && getBossScore() > 0){
+	    if(getLevel() == 9 && getBossScore() > 0){
 	    	randomBulletBigEnemy();
 	    }
 
@@ -285,11 +292,17 @@ public class GameEngine implements KeyListener, GameReporter{
 	    }
 	    if(getBossScore() == 0){
 	    	gp.sprites.add(bo);
-	    	//die();
+	    	s++;
 	    }
-	   
-	   
+	    gp.updateGameUI(this);
 	} 
+
+	public void processdie(){
+
+		gp.updateGameUI(this);
+		if(s == 1)
+	  		f.massageshowGamewin(this);
+	}
 
 	public void randomBulletBigEnemy(){
 		answer = rn.nextInt(10) + 1;	
@@ -340,7 +353,7 @@ public class GameEngine implements KeyListener, GameReporter{
 			v.move(1,false);
 			break;
 		case KeyEvent.VK_SPACE:
-			 if(getLevel() >= 4 && getLevel() != 7){
+			 if(getLevel() >= 4 && getLevel() != 9){
 			 	generateMissile2();
 			 	generateMissile();
 			 }
@@ -380,22 +393,16 @@ public class GameEngine implements KeyListener, GameReporter{
 	}
 
 	public  int getLevel(){
-		if(level == 7 && scoreboss > 0){
-	    	//generateBigEnemy();
-	    	gp.sprites.add(boss);
-	    }	
-
 		return level;
 	}
 	
 	public int getBossScore(){	
-		if(scoreboss < 0){
-			gp.sprites.remove(boss);
-			//gp.sprites.add(bo);
-			return 0;	
-		}	
-		return scoreboss;
+		if(scoreboss >= 0)
+		   return scoreboss;
+
+		return 0;
 	}
+
 	@Override
 	public void keyPressed(KeyEvent e) {
 		controlVehicle(e);

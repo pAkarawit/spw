@@ -16,27 +16,31 @@ public class GamePanel extends JPanel {
 	private BufferedImage bi;	
 	private Image img;
 	Graphics2D big ;
+	Toolkit e;
 	
 	ArrayList<Sprite> sprites = new ArrayList<Sprite>();
 
 	public GamePanel() {
 		bi = new BufferedImage(400, 600, BufferedImage.TYPE_INT_ARGB);
 		big = (Graphics2D) bi.getGraphics();
-		big.setBackground(Color.BLACK);		
+		//big.setBackground(Color.BLACK);		
+
+		e = Toolkit.getDefaultToolkit();
+		img = e.getImage("C:/Users/NextSpeed/Documents/GitHub/spw/f2/blue.png");
         
 	}
 
 	public void updateGameUI(GameReporter reporter){
-		big.clearRect(0, 0, 400, 600);
+		//big.clearRect(0, 0, 400, 600);
 
-        
-		big.setColor(Color.WHITE);		
+        big.drawImage(img , 0, 0, 400 ,600, null);
+		//big.setColor(Color.WHITE);		
 		big.drawString(String.format("%08d", reporter.getScore()), 300, 20);
 		big.drawString(String.format("%d", reporter.getNumberalive()), 180 , 20);
-		if(reporter.getLevel() < 7){
+		if(reporter.getLevel() < 9){
 			big.drawString(String.format("Level : %d", reporter.getLevel()), 30, 20 );
 		}
-		if(reporter.getLevel() == 7){
+		if(reporter.getLevel() == 9){
 			big.drawString(String.format("Score BOSS : %d ",reporter.getBossScore()), 30, 20);
 	    }
 
